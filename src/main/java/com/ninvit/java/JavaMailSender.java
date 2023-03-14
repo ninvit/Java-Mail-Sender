@@ -1,10 +1,15 @@
-package com.itcuties.java;
+package com.ninvit.java;
 
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 public class JavaMailSender {
 
@@ -21,7 +26,7 @@ public class JavaMailSender {
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication("ninvit@gmail.com",
-                                "mqptgqmprgzhgmbi");
+                                "senhaEmail");
                     }
                 });
         session.setDebug(true);
@@ -29,14 +34,20 @@ public class JavaMailSender {
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("seuemail@gmail.com"));
-
-            Address[] toUser = InternetAddress //Destinatário(s)
-                    .parse("ninvit@gmail.com");
-
+            message.setFrom(new InternetAddress("ninvit@gmail.com"));
+            Address[] toUser = InternetAddress.parse("ninvit@gmail.com");
             message.setRecipients(Message.RecipientType.TO, toUser);
             message.setSubject("Enviando email com JavaMail");
             message.setText("Enviei este email utilizando JavaMail");
+
+            BodyPart messageBodyPart = new MimeBodyPart();
+            Multipart multipart = new MimeMultipart();
+            String filename = "ninvit.txt";
+            DataSource source = new FileDataSource(filename);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(filename);
+            multipart.addBodyPart(messageBodyPart);
+            message.setContent(multipart);
             Transport.send(message);
 
             System.out.println("Done :D!!!");
